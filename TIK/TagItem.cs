@@ -11,7 +11,7 @@ namespace TIK
     [Serializable]
     public class TagItem
     {
-        public string name;//имя тэга
+        string name;//имя тэга
         public object data;//значение
         public TagItem left, right;//ветви
         string fullPath;
@@ -21,6 +21,12 @@ namespace TIK
         TagItem find;
         public static bool findOk = false;
 
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+        
         public string Fullpath
         {
             get { return fullPath; }
@@ -30,6 +36,24 @@ namespace TIK
         {
             get { return level; }
             set { level = value; }
+        }
+        /// <summary>
+        /// Свойство возвращает List потомков
+        /// </summary>
+        public List<TagItem> ChildrensList
+        {
+            get
+            {
+                List<TagItem> childrens = new List<TagItem>() { this.left, this.right };
+                return childrens;
+            }
+        }
+        /// <summary>
+        /// Вся информация о теге в строчку
+        /// </summary>
+        public string TagToString
+        {
+            get { return $"{Name}, {data}, L{Level}, {ShowType(this)}, {Fullpath}"; }
         }
         public TagItem()
         {
@@ -120,11 +144,11 @@ namespace TIK
             } while (!ok);
             tag.name = newName;
         }
-            /// <summary>
-            /// Возвращает рандомное значение int/double/bool
-            /// </summary>
-            /// <returns></returns>
-            static object ReturnData()
+        /// <summary>
+        /// Возвращает рандомное значение int/double/bool
+        /// </summary>
+        /// <returns></returns>
+        static object ReturnData()
         {
             int i;
             double d;
@@ -314,29 +338,30 @@ namespace TIK
         /// сохраняем в файл
         /// </summary>
         /// <param name="tag"></param>
-        public void Save(TagItem tag)
+        public void SaveTree(TagItem tag, string savePath)
         {
             XmlSerializer formatter = new XmlSerializer(typeof(TagItem));
-            using (FileStream fs = new FileStream(@"D:\Tags.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, tag);
-                Console.WriteLine(@"Дерево сохранено в D:\Tags.xml.");
+                Console.WriteLine($@"Дерево сохранено в {savePath}.");
             }
         }
         /// <summary>
         /// читаем из файла
         /// </summary>
         /// <returns></returns>
-        public TagItem Load()
+        public TagItem LoadTree(string loadPath)
         {
             XmlSerializer formatter = new XmlSerializer(typeof(TagItem));
-            using (FileStream fs = new FileStream(@"D:\Tags.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(loadPath, FileMode.OpenOrCreate))
             {
                 TagItem newTagItems = (TagItem)formatter.Deserialize(fs);
-                Console.WriteLine(@"Дерево прочитано из D:\Tags.xml.");
+                Console.WriteLine($@"Дерево прочитано из {loadPath}.");
                 return newTagItems;
             }
         }
+        
     }
 
 }

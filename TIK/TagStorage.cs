@@ -11,10 +11,29 @@ using System.Xml.Serialization;
 namespace TIK
 {
     [Serializable]
-    class TagStorage
+    public class TagStorage
     {
         TagItem root;
 
+        /// <summary>
+        /// Путь к дереву
+        /// </summary>
+        public TagItem RootPath
+        {
+            get { return root.left; }
+            set { root.left = value; }
+        }
+        /// <summary>
+        /// Позвращает наследников корневого элемента
+        /// </summary>
+        public List<TagItem> ChildrensList
+        {
+            get
+            {
+                List<TagItem> childrens = new List<TagItem>() { this.root.left};
+                return childrens;
+            }
+        }
         public TagItem Root
         {
             get { return root; }

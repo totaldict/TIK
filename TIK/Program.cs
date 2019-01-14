@@ -62,12 +62,12 @@ namespace TIK
                             int k = Vvod(3);
                             if (k == 1)
                             {
-                                tagTree = tagTree.Load();   //Загрузка из XML
+                                tagTree = tagTree.LoadTree(@"D:\Tags.xml");   //Загрузка из XML
                                 //TagItem.ShowTree(tagTree, 10);
                             }
                             if (k == 2)
                             {
-                                tagTree.Save(tagTree);      //Сохранение в XML
+                                tagTree.SaveTree(tagTree, @"D:\Tags.xml");      //Сохранение в XML
                             }
                             break;
                         }
