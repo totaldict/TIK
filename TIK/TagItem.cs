@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Drawing;
+using System.Windows.Media.Imaging;
+using System.Windows;
 
 namespace TIK
 {
@@ -26,7 +29,12 @@ namespace TIK
             get { return name; }
             set { name = value; }
         }
-        
+        public object Data
+        {
+            get { return data; }
+            set { data = value; }
+        }
+
         public string Fullpath
         {
             get { return fullPath; }
@@ -36,6 +44,10 @@ namespace TIK
         {
             get { return level; }
             set { level = value; }
+        }
+        public string LevelString
+        {
+            get { return $"L{level}"; }
         }
         /// <summary>
         /// Свойство возвращает List потомков
@@ -55,6 +67,34 @@ namespace TIK
         {
             get { return $"{Name}, {data}, L{Level}, {ShowType(this)}, {Fullpath}"; }
         }
+        /// <summary>
+        /// Возвращает иконку, которая соответствует типу данных
+        /// </summary>
+        public BitmapSource IconSource
+        {
+            get
+            {
+                if (this.data is int) return ConvertBitmap(Properties.Resources._1int);
+                if (this.data is bool) return ConvertBitmap(Properties.Resources._2bool);
+                if (this.data is double) return ConvertBitmap(Properties.Resources._3double);
+                if (this.data == null) return ConvertBitmap(Properties.Resources._4none);
+                return ConvertBitmap(Properties.Resources._4none);
+            }
+        }
+        /// <summary>
+        /// Свойство возвращает тип значения
+        /// </summary>
+        public string ShowTagType
+        {
+            get{
+            string type = "none";//тип значения
+            if (this.data is double) type = "double";
+            if (this.data is int) type = "int";
+            if (this.data is bool) type = "bool";
+            if (this.data == null) type = "none";
+            return type;
+            }
+        }
         public TagItem()
         {
             name = "tag" + count;
@@ -64,7 +104,7 @@ namespace TIK
             fullPath = "";
             count++;
         }
-        TagItem(string n, object d)
+        public TagItem(string n, object d)
         {
             name = n + count;
             data = d;
@@ -344,7 +384,7 @@ namespace TIK
             using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, tag);
-                Console.WriteLine($@"Дерево сохранено в {savePath}.");
+                //Console.WriteLine($@"Дерево сохранено в {savePath}.");
             }
         }
         /// <summary>
@@ -361,7 +401,20 @@ namespace TIK
                 return newTagItems;
             }
         }
-        
+        /// <summary>
+        /// Переводит Bitmap в BitmapSource
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static BitmapSource ConvertBitmap(Bitmap source)
+        {
+            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                          source.GetHbitmap(),
+                          IntPtr.Zero,
+                          Int32Rect.Empty,
+                          BitmapSizeOptions.FromEmptyOptions());
+        }
+
     }
 
 }
