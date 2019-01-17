@@ -23,7 +23,7 @@
                 </ContextMenu>
             </TreeView.ContextMenu>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildrensList}">
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding IconSource}"/>
                         <TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

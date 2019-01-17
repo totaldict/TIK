@@ -23,6 +23,8 @@ namespace TIK
         static int count = 0;
         TagItem find;
         public static bool findOk = false;
+        List<TagItem> childrens;  //список детей
+
 
         public string Name
         {
@@ -56,8 +58,19 @@ namespace TIK
         {
             get
             {
-                List<TagItem> childrens = new List<TagItem>() { this.left, this.right };
-                return childrens;
+                childrens[0] = this.left;
+                childrens[1] = this.right;
+                return this.childrens;
+            }
+            set
+            {
+                try
+                {
+                    childrens = value;
+                    if (value.Count >0&&value[0] != null) this.left = value[0];
+                    if (value.Count==2&&value[1] != null) this.right = value[1];
+                }
+                catch { }
             }
         }
         /// <summary>
@@ -103,6 +116,7 @@ namespace TIK
             right = null;
             fullPath = "";
             count++;
+            childrens = new List<TagItem>() { left, right};
         }
         public TagItem(string n, object d)
         {
@@ -112,6 +126,7 @@ namespace TIK
             right = null;
             fullPath = "";
             count++;
+            childrens = new List<TagItem>() { left, right};
         }
         /// <summary>
         /// Возвращает тип значения тэга

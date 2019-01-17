@@ -126,7 +126,7 @@ namespace UserInterfaceWpf
 
         private void MenuItemChangeName_Click(object sender, RoutedEventArgs e)
         {
-            //treeViewItemToChange
+            //treeViewItemToChange.Template
         }
 
         private void MenuItemAddTag_Click(object sender, RoutedEventArgs e)
@@ -134,8 +134,13 @@ namespace UserInterfaceWpf
             if (treeViewItemToChange != null)
             {
                 TagItem tempInsertedTag = new TagItem();
-                List <TagItem> insertTagList= new List<TagItem> { tempInsertedTag };
+                
                 tempInsertedTag.Name = "AddedTag";      //вот тут изменить чтобы можно было задавать имя
+                //tempInsertedTag.data = null;
+                //tempInsertedTag.left = null;
+                //tempInsertedTag.right = null;
+                List<TagItem> insertTagList = new List<TagItem> { tempInsertedTag, null };
+
                 treeViewItemToChange.Focus();
                 treeViewItemToChange.ItemsSource = insertTagList;
                 
