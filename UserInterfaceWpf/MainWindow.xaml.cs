@@ -134,8 +134,10 @@ namespace UserInterfaceWpf
             if (treeViewItemToChange != null)
             {
                 TagItem tempInsertedTag = new TagItem();
-                
-                tempInsertedTag.Name = "AddedTag";      //вот тут изменить чтобы можно было задавать имя
+                InputBox.InputBox inputBox = new InputBox.InputBox("Имя тега:");   //Добавил DLL с окном ввода
+                tempInsertedTag.Name = inputBox.getString();            //Оттуда берём имя тэга
+                inputBox = new InputBox.InputBox("Значение:");   
+                tempInsertedTag.Data = inputBox.getString();
                 //tempInsertedTag.data = null;
                 //tempInsertedTag.left = null;
                 //tempInsertedTag.right = null;
