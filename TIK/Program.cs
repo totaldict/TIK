@@ -52,8 +52,8 @@ namespace TIK
                         {
                             Console.WriteLine("Сколько элементов будет в дереве?");
                             int k = Vvod(40);   //здесь ограничение на макс. 40 элементов
-                            tagTree = TagItem.AddElement(k);
-                            TagItem.SetPaths(tagTree, "first"); //прописываем пути с первого
+                            tagTree = TagItem.AddElement(k, "first");
+                            //TagItem.SetPaths(tagTree, "first"); //прописываем пути с первого
                             break;
                         }
                     case 2: //2. Загрузка / выгрузка дерева тэгов(D:\Tags.xml);
@@ -77,7 +77,7 @@ namespace TIK
                             int k = Vvod(3);
                             if (k == 1)
                             {
-                                TagItem.ShowTree(tagTree, 10);  //вывод деревом
+                               // TagItem.ShowTree(tagTree, 10);  //вывод деревом
                             }
                             if (k == 2)
                             {
@@ -87,47 +87,47 @@ namespace TIK
                         }
                     case 4: //4. Удаление тэга по имени;
                         {
-                            Console.WriteLine("Введите имя тега, который удаляем:");
-                            string name = Console.ReadLine();
-                            TagItem.findOk = false;
-                            TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
-                            if (find != null)
-                                Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
-                            else
-                                Console.WriteLine($"Тег {name} не найден!");
-                            tagTree = tagTree.DelTagItem(tagTree, find);    
-                            TagItem.SetPaths(tagTree, "first"); //перепрописываем пути с первого после удаления
-                            //TagItem.ShowTree(tagTree, 10);     
+                            //Console.WriteLine("Введите имя тега, который удаляем:");
+                            //string name = Console.ReadLine();
+                            //TagItem.findOk = false;
+                            //TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
+                            //if (find != null)
+                            //    Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
+                            //else
+                            //    Console.WriteLine($"Тег {name} не найден!");
+                            //tagTree = tagTree.DelTagItem(tagTree, find);    
+                            //TagItem.SetPaths(tagTree, "first"); //перепрописываем пути с первого после удаления
+                            ////TagItem.ShowTree(tagTree, 10);     
                             break;
                         }
                     case 5: //5. Добавление нового тэга.
                         {
-                            Console.WriteLine("Куда добавить тег?");
-                            string name = Console.ReadLine();
-                            TagItem.findOk = false;
-                            TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
-                            if (find != null)
-                                Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
-                            else
-                                Console.WriteLine($"Тег {name} не найден!");
-                            find.AddTagItem(find);
-                            //TagItem.ShowTree(tagTree, 10);
+                            //Console.WriteLine("Куда добавить тег?");
+                            //string name = Console.ReadLine();
+                            //TagItem.findOk = false;
+                            //TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
+                            //if (find != null)
+                            //    Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
+                            //else
+                            //    Console.WriteLine($"Тег {name} не найден!");
+                            //find.AddTagItem(find);
+                            ////TagItem.ShowTree(tagTree, 10);
 
                             break;
                         }
                     case 6: //6. Переименование тэга.
                         {
-                            Console.WriteLine("Введите имя тега, который переименовываем?");
-                            string name = Console.ReadLine();
-                            TagItem.findOk = false;
-                            TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
-                            if (find != null)
-                                Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
-                            else
-                                Console.WriteLine($"Тег {name} не найден!");
-                            find.ChangeTagName(find);
-                            TagItem.SetPaths(tagTree, "first"); //перепрописываем пути с первого после переименования тега
-                            TagItem.ShowTree(tagTree, 10);
+                            //Console.WriteLine("Введите имя тега, который переименовываем?");
+                            //string name = Console.ReadLine();
+                            //TagItem.findOk = false;
+                            //TagItem find = tagTree.FindTag(tagTree, name);  //ищем этот тег
+                            //if (find != null)
+                            //    Console.WriteLine($"Найден тег {name}:{find.ReadTagData(find)}");
+                            //else
+                            //    Console.WriteLine($"Тег {name} не найден!");
+                            //find.ChangeTagName(find);
+                            //TagItem.SetPaths(tagTree, "first"); //перепрописываем пути с первого после переименования тега
+                            //TagItem.ShowTree(tagTree, 10);
                             break;
                         }
                 }

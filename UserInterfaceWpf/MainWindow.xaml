@@ -17,9 +17,9 @@
         <TreeView x:Name="treeView" Grid.Column="0" Grid.Row="0" PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown">
             <TreeView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Delete childrens" CommandParameter="{Binding Path=ChildrensList}" Click="MenuItemDelete_Click"/>
-                    <MenuItem Header="Change name" CommandParameter="{Binding Path=ChildrensList}" Click="MenuItemChangeName_Click"/>
-                    <MenuItem Header="Add Tag" CommandParameter="{Binding Path=ChildrensList}" Click="MenuItemAddTag_Click"/>
+                    <MenuItem Header="Delete childrens" CommandParameter="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="MenuItemDelete_Click"/>
+                    <MenuItem Header="Change name" CommandParameter="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="MenuItemChangeName_Click"/>
+                    <MenuItem Header="Add Tag" CommandParameter="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="MenuItemAddTag_Click"/>
                 </ContextMenu>
             </TreeView.ContextMenu>
             <TreeView.ItemTemplate>

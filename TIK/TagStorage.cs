@@ -18,22 +18,15 @@ namespace TIK
         /// <summary>
         /// Путь к дереву
         /// </summary>
-        public TagItem RootPath
+        public List<TagItem> RootPath
         {
-            get { return root.left; }
-            set { root.left = value; }
+            get { return root.ChildrensList; }
+            set { root.ChildrensList = value; }
         }
         /// <summary>
         /// Позвращает наследников корневого элемента
         /// </summary>
-        public List<TagItem> ChildrensList
-        {
-            get
-            {
-                List<TagItem> childrens = new List<TagItem>() { this.root.left};
-                return childrens;
-            }
-        }
+
         public TagItem Root
         {
             get { return root; }
@@ -42,6 +35,11 @@ namespace TIK
         public TagStorage()
         {
             Root=new TagItem();
+        }
+        public TagStorage(TagItem tagTree)
+        {
+            Root = new TagItem();
+            Root.ChildrensList.Add(tagTree);
         }
 
         //public void Save(TagItem tag)

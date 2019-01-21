@@ -33,7 +33,7 @@ namespace UserInterfaceWpf
         public MainWindow()
         {
             InitializeComponent();
-            rootTagTree.RootPath = tagTree;     //пустое дерево
+            rootTagTree.RootPath.Add(tagTree);     //пустое дерево
             FillingTreeView(rootTagTree.Root);  //пустое дерево загружается при старте
         }
         /// <summary>
@@ -67,7 +67,7 @@ namespace UserInterfaceWpf
                 openPath = myDialog.FileName;   //назначаем путь к файлу
                 tagTree = tagTree.LoadTree(openPath);       //загружаем из файла наш XML
                 rootTagTree = new TagStorage();
-                rootTagTree.RootPath = tagTree;
+                rootTagTree.RootPath.Add(tagTree);
             }
         }
         /// <summary>
@@ -134,9 +134,9 @@ namespace UserInterfaceWpf
             if (treeViewItemToChange != null)
             {
                 TagItem tempInsertedTag = new TagItem();
-                InputBox.InputBox inputBox = new InputBox.InputBox("Имя тега:");   //Добавил DLL с окном ввода
+                InputBox inputBox = new InputBox("Имя тега:");   //Добавил окно ввода параметров добавляемого тега
                 tempInsertedTag.Name = inputBox.getString();            //Оттуда берём имя тэга
-                inputBox = new InputBox.InputBox("Значение:");   
+                inputBox = new InputBox("Значение:");   
                 tempInsertedTag.Data = inputBox.getString();
                 //tempInsertedTag.data = null;
                 //tempInsertedTag.left = null;
@@ -163,8 +163,8 @@ namespace UserInterfaceWpf
         private async void SaveToFileAsync()
         {
             FolderBrowserDialog fldDialog = new FolderBrowserDialog();
-            fldDialog.ShowDialog();
-            savePath = $@"{fldDialog.SelectedPath}\saved.xml"; //выбираем только папку
+            fldDialog.ShowDialog();         //выбираем только папку сохранения и сохраняем в файл с таймштампом
+            savePath = $@"{fldDialog.SelectedPath}\saved{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.xml"; 
             await Task.Factory.StartNew(() => SaveToFile(), TaskCreationOptions.LongRunning);
         }
         /// <summary>
