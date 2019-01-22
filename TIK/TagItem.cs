@@ -16,17 +16,12 @@ namespace TIK
     {
         string name;//имя тэга
         public object data;//значение
-        //public TagItem left, right;//ветви
         string fullPath;
-        int level;
+        int level=1;
         static Random rnd = new Random();   //для заполнения дерева не вручную
         static int count = 0;
-        //TagItem find;
         public static bool findOk = false;
-        //TagItem parent;     //родитель
         List<TagItem> childrens;  //список детей
-
-
 
         public string Name
         {
@@ -38,7 +33,6 @@ namespace TIK
             get { return data; }
             set { data = value; }
         }
-
         public string Fullpath
         {
             get { return fullPath; }
@@ -112,7 +106,7 @@ namespace TIK
         {
             name = "tag" + count;
             data = null;
-            fullPath = "";
+            fullPath = name;
             count++;
             childrens = new List<TagItem>();
         }
@@ -120,7 +114,7 @@ namespace TIK
         {
             name = n + count;
             data = d;
-            fullPath = "";
+            fullPath = name;
             count++;
             childrens = new List<TagItem>();
         }
@@ -218,7 +212,7 @@ namespace TIK
         /// </summary>
         /// <param name="size">количество элементов</param>
         /// <returns></returns>
-        public static TagItem AddElement(int size, string path = "first", int setLevel=1)
+        public static TagItem AddElement(int size, string path = "first", int setLevel = 1)
         {
             TagItem newTag;
             int numberOfElements, remainOfElements;
@@ -234,7 +228,7 @@ namespace TIK
             else
                 newTag.Fullpath = $"{path}.{newTag.Name}";
 
-            newTag.childrens.Add(AddElement(numberOfElements, newTag.Fullpath, newTag.Level+1));
+            newTag.childrens.Add(AddElement(numberOfElements, newTag.Fullpath, newTag.Level + 1));
             newTag.childrens.Add(AddElement(remainOfElements, newTag.Fullpath, newTag.Level + 1));
             DelNullChilds(newTag);
 
@@ -444,8 +438,32 @@ namespace TIK
                           Int32Rect.Empty,
                           BitmapSizeOptions.FromEmptyOptions());
         }
+        /// <summary>
+        /// Обновление путей в дереве
+        /// </summary>
+        /// <param name="tagTree"></param>
+        public static void UpdatePaths(TagItem tagTree, string path = "first", int setLevel = 1)
+        {
+            if (path.CompareTo("first") == 0)
+            {
+                tagTree.Fullpath = tagTree.Name;
+                tagTree.Level = setLevel;
+            }
+            else
+            {
+                tagTree.Fullpath = $"{path}.{tagTree.Name}";
+            }
+            if (tagTree.childrens == null)  //проверка, если потомков нет - не выполняем дальше
+                return;
+            for (int nmbrOfChldrns = 0; nmbrOfChldrns < tagTree.ChildrensList.Count; nmbrOfChldrns++)
+            {
+                if (tagTree.childrens[nmbrOfChldrns] == null)   //проверка, если один из потомков нулевой - пропускаем его
+                    continue;
+                UpdatePaths(tagTree.ChildrensList[nmbrOfChldrns], tagTree.Fullpath, tagTree.Level + 1);
+            }
+        }
 
     }
-
 }
+
 

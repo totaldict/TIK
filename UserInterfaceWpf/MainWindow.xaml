@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UserInterfaceWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -15,6 +15,11 @@
             <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
         <TreeView x:Name="treeView" Grid.Column="0" Grid.Row="0" PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown" SelectedItemChanged="treeView_SelectedItemChanged">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete childrens" CommandParameter="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="MenuItemDelete_Click"/>

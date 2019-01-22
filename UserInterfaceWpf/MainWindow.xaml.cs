@@ -31,6 +31,7 @@ namespace UserInterfaceWpf
         TreeViewItem treeViewItemToChange;  //элемент дерева, который изменяем
         TagItem tagItemToChange;        //элемент TagItem, который будем изменять
         string savePath;        //путь сохранения
+        bool treeChanged = false;       //триггер, определяющий, изменено ли дерево
         public MainWindow()
         {
             InitializeComponent();
@@ -99,55 +100,76 @@ namespace UserInterfaceWpf
         {
             while (source != null && source.GetType() != typeof(T))
                 source = VisualTreeHelper.GetParent(source);
-
             return source;
         }
-        public ItemsControl GetSelectedTreeViewItemParent(TreeViewItem item)
-        {
-            DependencyObject parent = VisualTreeHelper.GetParent(item);
-            while (!(parent is TreeViewItem || parent is System.Windows.Controls.TreeView))
-            {
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-
-            return parent as ItemsControl;
-        }
-
-        
         private void MenuItemDelete_Click(object sender, RoutedEventArgs e) //удаление из контекстного меню
         {           //вывод окна подтверждения удаления
             if (System.Windows.MessageBox.Show("Вы действительно хотите удалить предков?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.Yes)
             {
-                if (treeViewItemToChange != null)
-                {
-                    treeViewItemToChange.Focus();
-                    treeViewItemToChange.ItemsSource = null;
-                }
+                tagItemToChange.ChildrensList = null;
+                TreeUpdateAfterChanges();
             }
         }
 
         private void MenuItemChangeName_Click(object sender, RoutedEventArgs e)
         {
             InputBox inputBox = new InputBox("Введите новое имя:");
-            tagItemToChange.Name= inputBox.getString();
-            //сюда обновление дерева
-            FillingTreeView(rootTagTree.Root);
+            tagItemToChange.Name = inputBox.getString();
+            TreeUpdateAfterChanges(); //обновление дерева
         }
 
         private void MenuItemAddTag_Click(object sender, RoutedEventArgs e)
         {
             if (treeViewItemToChange != null)
             {
-                TagItem tempInsertedTag = new TagItem();
-                InputBox inputBox = new InputBox("Имя тега:");   //Добавил окно ввода параметров добавляемого тега
-                tempInsertedTag.Name = inputBox.getString();            //Оттуда берём имя тэга
-                inputBox = new InputBox("Значение:");   
-                tempInsertedTag.Data = inputBox.getString();
-
+                TagItem newTag = MakeNewInsertedTag();
                 treeViewItemToChange.Focus();
-               ((List<TagItem>)treeViewItemToChange.ItemsSource).Add(tempInsertedTag);
-                FillingTreeView(rootTagTree.Root);
+                tagItemToChange.ChildrensList.Add(newTag);     //добавляем вставляемый тег в потомки родительского
+                //((List<TagItem>)treeViewItemToChange.ItemsSource).Add(tempInsertedTag);  
+                TreeUpdateAfterChanges();
             }
+        }
+        /// <summary>
+        /// Создаёт новый вставляемый тег
+        /// </summary>
+        /// <returns></returns>
+        private TagItem MakeNewInsertedTag()
+        {
+            string resultString;
+            double resultDouble;
+            int resultInt;
+            bool resultBool;
+            TagItem tempInsertedTag = new TagItem();
+            InputBox inputBox = new InputBox("Имя тега:");   //Добавил окно ввода параметров добавляемого тега
+            tempInsertedTag.Name = inputBox.getString();            //Оттуда берём имя тэга
+            inputBox = new InputBox("Значение:");
+            resultString = inputBox.getString();
+            if (int.TryParse(resultString, out resultInt))
+                tempInsertedTag.Data = resultInt;
+            else
+            {
+                if (double.TryParse(resultString, out resultDouble))
+                    tempInsertedTag.Data = resultDouble;
+                else
+                {
+                    if (bool.TryParse(resultString, out resultBool))
+                        tempInsertedTag.Data = resultBool;
+                    else
+                        tempInsertedTag.Data = resultString;
+                }
+            }
+            tempInsertedTag.Fullpath = $"{tagItemToChange.Fullpath}.{tempInsertedTag.Name}";
+            tempInsertedTag.Level = tagItemToChange.Level + 1;
+            return tempInsertedTag;
+        }
+        /// <summary>
+        /// Обновление дерева после изменения
+        /// </summary>
+        private void TreeUpdateAfterChanges()
+        {
+            TagItem.UpdatePaths(tagTree);  //обновляем пути fullpath
+            FillingTreeView(rootTagTree.Root);
+            treeChanged = true; //дерево было изменено - меняем триггер на true
         }
         /// <summary>
         /// кнопка сохранения в файл
@@ -157,16 +179,24 @@ namespace UserInterfaceWpf
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             SaveToFileAsync();
+            treeChanged = false; //после сохранения меняем триггер "изменённости дерева" обратно на false
         }
         /// <summary>
         /// Выполняет сохранение файла XML в отдельном потоке
         /// </summary>
         private async void SaveToFileAsync()
         {
+            ChangeSavePath();
+            await Task.Factory.StartNew(() => SaveToFile(), TaskCreationOptions.LongRunning);
+        }
+        /// <summary>
+        /// Выбор папки сохранения файла
+        /// </summary>
+        private void ChangeSavePath()
+        {
             FolderBrowserDialog fldDialog = new FolderBrowserDialog();
             fldDialog.ShowDialog();         //выбираем только папку сохранения и сохраняем в файл с таймштампом
-            savePath = $@"{fldDialog.SelectedPath}\saved{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.xml"; 
-            await Task.Factory.StartNew(() => SaveToFile(), TaskCreationOptions.LongRunning);
+            savePath = $@"{fldDialog.SelectedPath}\saved{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.xml";
         }
         /// <summary>
         /// Сохранение XML-файла
@@ -179,14 +209,40 @@ namespace UserInterfaceWpf
         private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             var tree = sender as System.Windows.Controls.TreeView;
-
             // определяем тип выбранного элемента.
             if (tree.SelectedItem is TagItem)
             {
-                tagItemToChange = (TagItem)tree.SelectedItem;
+                tagItemToChange = (TagItem)tree.SelectedItem;   //выбираем тег для изменений
 
-                // обрабатываем TagItem.
-                //this.Title = "Selected: " + tree.SelectedItem.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Действие при закрытии окна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (treeChanged)
+            {
+                string msg = "Данные были изменены. Сохранить данные перед выходом?";
+                MessageBoxResult result = System.Windows.MessageBox.Show(msg, "Закрытие окна", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    // Если пользователь не хочет закрывать - не закрываем окно
+                    e.Cancel = true;
+                }
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Если пользователь хочет сохранить перед выходом
+                    ChangeSavePath();
+                    SaveToFile();
+                }
+                if (result == MessageBoxResult.No)
+                {
+                    // Если пользователь не хочет сохранять - закрываем окно
+                }
             }
         }
     }
