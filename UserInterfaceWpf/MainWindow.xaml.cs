@@ -29,6 +29,7 @@ namespace UserInterfaceWpf
         TagItem tagTree = new TagItem();
         TagStorage rootTagTree = new TagStorage();
         TreeViewItem treeViewItemToChange;  //элемент дерева, который изменяем
+        TagItem tagItemToChange;        //элемент TagItem, который будем изменять
         string savePath;        //путь сохранения
         public MainWindow()
         {
@@ -76,6 +77,7 @@ namespace UserInterfaceWpf
         /// <param name="tagTreeTemp">дерево, которое надо отобразить</param>
         private void FillingTreeView(TagItem tagTreeTemp)
         {
+            treeView.ItemsSource = null;
             treeView.ItemsSource = tagTreeTemp.ChildrensList;
         }
 
@@ -126,7 +128,10 @@ namespace UserInterfaceWpf
 
         private void MenuItemChangeName_Click(object sender, RoutedEventArgs e)
         {
-            //treeViewItemToChange.Template
+            InputBox inputBox = new InputBox("Введите новое имя:");
+            tagItemToChange.Name= inputBox.getString();
+            //сюда обновление дерева
+            FillingTreeView(rootTagTree.Root);
         }
 
         private void MenuItemAddTag_Click(object sender, RoutedEventArgs e)
@@ -138,14 +143,10 @@ namespace UserInterfaceWpf
                 tempInsertedTag.Name = inputBox.getString();            //Оттуда берём имя тэга
                 inputBox = new InputBox("Значение:");   
                 tempInsertedTag.Data = inputBox.getString();
-                //tempInsertedTag.data = null;
-                //tempInsertedTag.left = null;
-                //tempInsertedTag.right = null;
-                List<TagItem> insertTagList = new List<TagItem> { tempInsertedTag, null };
 
                 treeViewItemToChange.Focus();
-                treeViewItemToChange.ItemsSource = insertTagList;
-                
+               ((List<TagItem>)treeViewItemToChange.ItemsSource).Add(tempInsertedTag);
+                FillingTreeView(rootTagTree.Root);
             }
         }
         /// <summary>
@@ -173,6 +174,20 @@ namespace UserInterfaceWpf
         private void SaveToFile()
         {
             tagTree.SaveTree(tagTree, savePath);
+        }
+
+        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var tree = sender as System.Windows.Controls.TreeView;
+
+            // определяем тип выбранного элемента.
+            if (tree.SelectedItem is TagItem)
+            {
+                tagItemToChange = (TagItem)tree.SelectedItem;
+
+                // обрабатываем TagItem.
+                //this.Title = "Selected: " + tree.SelectedItem.ToString();
+            }
         }
     }
 }

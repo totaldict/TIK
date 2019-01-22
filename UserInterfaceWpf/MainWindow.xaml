@@ -14,7 +14,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
-        <TreeView x:Name="treeView" Grid.Column="0" Grid.Row="0" PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown">
+        <TreeView x:Name="treeView" Grid.Column="0" Grid.Row="0" PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown" SelectedItemChanged="treeView_SelectedItemChanged">
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete childrens" CommandParameter="{Binding Path=ChildrensList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="MenuItemDelete_Click"/>
